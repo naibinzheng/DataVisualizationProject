@@ -8,6 +8,7 @@ from scipy.spatial import distance as ed
 import math
 from operator import sub
 from operator import add
+from sklearn.metrics.pairwise import cosine_similarity
 
 def main():
     w = []
@@ -24,8 +25,9 @@ def main():
 
 
     chord = pd.read_csv("../../../data/chords.csv")
+    label = chord['Label']
     matrix = chord.as_matrix(columns=chord.columns[1:13])
-    print (chord)
+    print (label)
 
     #Cmajor = chord['CM']
     #print (Cmajor)
@@ -46,9 +48,11 @@ def main():
         return d
 
     #algorithm code
-    for s in range(1,2):
+    for s in range(1,361):
         for t in range(24):
             mini_dis = float("inf")
+            bmi = float("inf")
+            bmj= float("inf")
             r = matrix[(randint(0, 23)), :]
             #print(r)
             for i in range(20):
@@ -73,25 +77,39 @@ def main():
                     #print(w[k-1][l-1])
                     #print(h*q)
 
-
+    print(w)
     #find the similarity grid
+    print(cosine_similarity([1, 0, 1], [1,0,1]))
+
+
+    for t in range(24):
+        max_cs = -1
+        r = matrix[t, :]
+        print(r)
+        chord_letter = label[t]
+        for i in range(20):
+            for j in range(20):
+                #print (w[i][j])
+                cs = cosine_similarity(w[i][j], r)
+                #print(dis)
+                if cs > max_cs:
+                    max_cs = cs
+                    bmi = i
+                    bmj = j
+                    plt.text(bmi, bmj, chord_letter, ha='center',va='center')
+
+
 
 
     #generate the distrabut matirx for fig1
-    c = []
-    for i in range(20):
-        v=[]
-        for j in range(20):
-            v.append('x')
-        c.append(v)
-    print(c)
+
 
     #display the figur1
-    for i in range(20):
-        for j in range(20):
-            plt.text(i, j, c[i][j], ha='center',va='center')
-    plt.xlim(-0.25, 19.5)
-    plt.ylim(-0.25, 19.5)
+    #for i in range(20):
+     #   for j in range(20):
+      #      plt.text(i, j, c[i][j], ha='center',va='center')
+    plt.xlim(-0.5, 19.5)
+    plt.ylim(-0.5, 19.5)
 
     plt.show()
 
