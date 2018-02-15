@@ -2,13 +2,13 @@ __author__ = 'Naibin Zheng'
 from random import *
 import numpy as np
 import matplotlib.pyplot as plt
-from sklearn.decomposition import PCA
 import pandas as pd
 from scipy.spatial import distance as ed
 import math
 from operator import sub
 from operator import add
 from sklearn.metrics.pairwise import cosine_similarity
+import sys
 
 def main():
     w = []
@@ -27,7 +27,7 @@ def main():
     chord = pd.read_csv("../../../data/chords.csv")
     label = chord['Label']
     matrix = chord.as_matrix(columns=chord.columns[1:13])
-    print (label)
+    #print (label)
 
     #Cmajor = chord['CM']
     #print (Cmajor)
@@ -78,9 +78,10 @@ def main():
                     #print(h*q)
 
     print(w)
-    #find the similarity grid
-    print(cosine_similarity([1, 0, 1], [1,0,1]))
 
+
+    #generate the distrabut matirx for fig1
+    fig =plt.figure()
 
     for t in range(24):
         max_cs = -1
@@ -89,39 +90,48 @@ def main():
         chord_letter = label[t]
         for i in range(20):
             for j in range(20):
-                #print (w[i][j])
+                #find the similarity grid
                 cs = cosine_similarity(w[i][j], r)
-                #print(dis)
                 if cs > max_cs:
                     max_cs = cs
                     bmi = i
                     bmj = j
-                    plt.text(bmi, bmj, chord_letter, ha='center',va='center')
+        plt.text(bmi, bmj, chord_letter, ha='center',va='center')
 
+    plt.xlim(-0.6, 19.4)
+    plt.ylim(-0.6, 19.4)
+    plt.title('Fig1 VAMSOM')
 
+    fig.savefig('music_som.png')
 
+    #generate fig2
+    fig =plt.figure()
+    CM = matrix[0,:]
+    print (CM)
+    CMfig = np.zeros((20, 20))
 
-    #generate the distrabut matirx for fig1
+    for i in range(20):
+        for j in range(20):
+            CMfig[i][j] = np.dot(np.array(CM), np.array(w[i][j]))
+    plt.imshow(CMfig, cmap='hot', interpolation='nearest')
+    plt.colorbar()
+    plt.title('Fig2 heatmap of CM')
 
+    fig.savefig('music_som_CM.png')
 
-    #display the figur1
-    #for i in range(20):
-     #   for j in range(20):
-      #      plt.text(i, j, c[i][j], ha='center',va='center')
-    plt.xlim(-0.5, 19.5)
-    plt.ylim(-0.5, 19.5)
+    #generate fig3
+    fig =plt.figure()
+    cm = matrix[12,:]
+    CMfig = np.zeros((20, 20))
+    for i in range(20):
+        for j in range(20):
+            CMfig[i][j] = np.dot(np.array(cm), np.array(w[i][j]))
+    plt.imshow(CMfig, cmap='hot', interpolation='nearest')
+    plt.colorbar()
+    plt.title('Fig3 heatmap of Cm')
+    fig.savefig('music_som_Cm.png')
 
     plt.show()
-
-
-
-
-
-
-
-            #print (r)
-
-
 
 
 
